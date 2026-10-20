@@ -1,0 +1,3 @@
+-r requirements.txt
+# Optional native Potts fitting; version used for the release smoke check.
+adabmDCA==0.7.8

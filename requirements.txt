@@ -1,0 +1,5 @@
+# Install a CUDA-compatible PyTorch build separately for GPU training.
+# These are compatibility ranges, not an original-training lockfile.
+torch>=2.2,<3
+numpy>=1.26,<3
+matplotlib>=3.8,<4
