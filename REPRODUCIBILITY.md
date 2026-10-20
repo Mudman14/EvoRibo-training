@@ -30,9 +30,11 @@ checkpoint (for example evaluation step sweeps and scalar-consistency warmup)
 use the current source defaults, not reconstructed historical values.
 
 The checkpoint contains no `split` field. The separately audited,
-argument-matched metrics sidecar supplies membership in `configs/recorded/`:
-8296 train (2513 nufold, 3986 repa_round1, 1797 nufolddb_round3), 48 validation,
-36 test, with no raw train-ID/held-out overlap. The sanitized record includes
+argument-matched metrics sidecar supplies training membership in `configs/recorded/`:
+8296 train (2513 nufold, 3986 repa_round1, 1797 nufolddb_round3), 46 internal
+validation and 36 test members, with no raw train-ID/held-out overlap. The official
+benchmark validation48/test36 list is separate; `1Y0Q_A` and `7O7Z_AH` are absent
+from both models' internal validation splits. The sanitized record includes
 checkpoint and sidecar SHA-256 identifiers. Membership does not establish
 homology independence. Actual data/features, historical environment, RNG
 state, and code revision remain unbundled. Historical query resolution was
@@ -48,7 +50,14 @@ evaluation instead uses `all_data_epoch45_best_1.pt`. Its separately extracted
 `configs/epoch45.json` records epoch45, step10791, batch16, accumulation4, and
 the fourth source `nufolddb_relaxed_gap25`. Exact args/config/hash are in
 `configs/recorded/epoch45_checkpoint_record.json`. This artifact has no embedded
-split; no training membership or GPU topology is inferred from its settings.
+split. A separately saved sidecar matches its exact arguments and training-log
+prefix and records 50,990 training members: 2,513 NuFold, 3,986 REPA, 1,797
+NuFoldDB round3, and 42,694 relaxed-gap25. Its membership is preserved in
+`configs/recorded/epoch45_split_membership.json`; the recorded DDP world size is
+four, so batch16/accumulation4 gives effective batch256. The internal validation
+split contains 46 IDs, versus 48 externally evaluated validation targets:
+`1Y0Q_A` and `7O7Z_AH` are absent from the internal validation split.
+ID exclusions do not establish homology separation; see `homology/`.
 Do not transfer the primary split membership to epoch45. Both profiles use the
 same recorded trunk widths/blocks/recycles and conditional velocity-flow head,
 but matching architecture does not make their training provenance equivalent.

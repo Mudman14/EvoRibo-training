@@ -2,8 +2,7 @@
 
 Standalone source snapshot of the RESM/BPP-conditioned pair trunk and factorized
 conditional velocity-flow statistics head. The Python package remains
-`RethinkingMSA_1` for import/checkpoint compatibility. This is the pair-statistics
-training route, not the older RNA-MSM/RNA-FM autoregressive decoder.
+`RethinkingMSA_1` for import/checkpoint compatibility.
 
 ## Install And Check
 
@@ -51,14 +50,23 @@ invalid tokens or unequal cleaned lengths are excluded. Inspect the audit,
 or qualified IDs, not sequence homology. Supply independently curated held-out
 sets to control leakage. Recorded primary split membership is included under
 `configs/recorded/`: 8296 train, 48 validation, 36 test. These are IDs, not data.
+The validation48/test36 IDs are the official benchmark. Actual historical
+training sidecars record 46 internal validation entries for both models;
+the two additional benchmark targets are `1Y0Q_A` and `7O7Z_AH`.
 Restrict each source's input files to its recorded membership for comparisons;
 auto-discovery otherwise trains on every available non-held-out sample.
 
 The delivered validation48/test36 generated-MSA set uses the **different**
 `all_data_epoch45_best_1.pt`: select `configs/epoch45.json` (epoch45/step10791,
 accumulation4, fourth source `nufolddb_relaxed_gap25`). Its checkpoint hash and
-exact path-free args/config are recorded separately; no epoch45 training
-membership or historical GPU count is inferred.
+exact path-free args/config are recorded separately. An argument/log-matched
+sidecar records 50,990 train, 46 internal validation and 36 test entries, with
+four DDP ranks; its membership is saved separately from the primary split.
+The external generated-MSA validation collection contains 48 entries.
+
+Use the [sequence-overlap auditor](homology/README.md) with the original query
+inputs to check training/validation/test homology at 80%, 85% and 90% identity.
+Recorded ID exclusions alone do not certify homology independence.
 
 ## Train
 
@@ -72,8 +80,8 @@ bash examples/train.sh
 # Four GPUs via torchrun, effective batch 8 * 4 * 2 = 64.
 NPROC=4 bash examples/train.sh
 # Slurm: environment must already be activated; resources override directives.
-sbatch --partition=a800 examples/run_a800.sbatch
-# Epoch45 four-source adaptation: topology is NOT a historical-world-size claim.
+sbatch --partition=gpua800 --qos=4a800 examples/run_a800.sbatch
+# Epoch45 four-source setup (recorded effective batch 256).
 PROFILE=configs/epoch45.json SOURCE_COUNT=4 NPROC=4 \
   BATCH_SIZE=16 GRAD_ACCUM=4 bash examples/train.sh
 ```

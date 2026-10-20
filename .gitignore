@@ -18,3 +18,9 @@ smoke_runs/
 *.npy
 *.npz
 *.log
+hpc_runs/
+homology/audit_outputs/
+homology/observed_*
+homology/OBSERVED_OVERLAPS.md
+*.out
+*.err

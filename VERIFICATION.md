@@ -10,7 +10,7 @@ matplotlib 3.10.8, pytest 9.0.3, optional adabmDCA 0.7.8.
 ```text
 conda activate DiffMSA
 python -m pytest -q -p no:cacheprovider
-21 passed (final run: 29.17s)
+43 passed, 1 skipped, 3 subtests passed (44.41s; audit dependency installed)
 
 python -m compileall -q RethinkingMSA_1 inverse_coevo_sampler.py train.py tests
 bash -n examples/train.sh examples/run_a800.sbatch
@@ -21,6 +21,10 @@ membership/checksums, source hash integrity, AST dependency closure, legacy
 MI/APC target construction, and disk-target reuse without memory retention.
 The missing-holdout regression was reproduced before fixing it; supplied
 missing validation/test FASTAs or test directories now fail before splitting.
+The base training suite has 21 tests. The optional homology suite adds 22
+passing tests; one parity comparison skips because the private original
+audit module is deliberately absent from the source release. The separate
+workspace audit suite passed all 23 tests, including that parity check.
 
 An isolated copy outside the original source tree executes real tiny CPU
 training with the factorized conditional velocity-flow loss, validation,
@@ -44,8 +48,9 @@ forwards `--audit_only`; no Slurm job was submitted.
 
 - Full historical retraining, original-data equivalence, convergence or bitwise
   checkpoint reproduction. Neither full datasets nor weights are bundled.
-- Original epoch45 training membership/GPU topology; none is inferred. Primary
-  split membership is separate and must not be reused as epoch45 provenance.
+- Original input-data identity on the historical HPC. Epoch45 membership and
+  four-rank DDP topology are recorded in an argument/log-matched sidecar;
+  primary split membership remains separate. These are not a full data bundle.
 - Real one/four-GPU optimization, NCCL collectives, A800 memory/performance,
   scheduler resource availability, or downstream RNA structure accuracy.
 - A clean dependency installation across the declared version ranges. These

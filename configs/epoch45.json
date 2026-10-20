@@ -3,7 +3,8 @@
     "checkpoint_name": "all_data_epoch45_best_1.pt",
     "epoch": 45,
     "global_step": 10791,
-    "record": "recorded/epoch45_checkpoint_record.json"
+    "record": "recorded/epoch45_checkpoint_record.json",
+    "historical_world_size": 4
   },
   "args": {
     "ids": "auto",

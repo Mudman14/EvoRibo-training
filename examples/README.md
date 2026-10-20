@@ -23,8 +23,8 @@ Add `--dataset2_*`, `--dataset3_*` paths for the primary mixture. For epoch45,
 select `--profile configs/epoch45.json` and supply `--dataset4_embedding_dir`,
 `--dataset4_attention_dir`, `--dataset4_query_dir`, `--dataset4_bpp_dir`, and
 `--dataset4_msa_dir`, with name `nufolddb_relaxed_gap25` already in the profile.
-The epoch45 recorded batch16/accumulation4 does not establish GPU topology or
-global batch. The shell wrapper's smaller defaults are memory adaptations:
+The epoch45 argument/log-matched sidecar records four ranks: batch16 and
+accumulation4 give effective batch256. The wrapper's smaller defaults are adaptations:
 set `BATCH_SIZE` and `GRAD_ACCUM` explicitly for your intended experiment.
 
 ## Slurm

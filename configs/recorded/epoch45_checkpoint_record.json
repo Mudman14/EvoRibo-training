@@ -114,5 +114,23 @@
     "triangle_attention_chunk_size": 64
   },
   "has_embedded_split": false,
-  "limitations": "No weights, data, original environment, training membership, or GPU topology are bundled or inferred for this checkpoint. Primary 8k membership must not be reused as epoch45 membership. The delivered validation48/test36 generated-MSA evaluation uses this checkpoint, not the primary 8k profile."
+  "membership_evidence": {
+    "kind": "args_matched_sidecar_and_checkpoint_training_log_prefix",
+    "sidecar": "train_metrics.json",
+    "sha256": "1fc43c9b85fa6d4dd85b3777a31e0c5c6c92609195110c5ae1081b121b85cde6"
+  },
+  "training_count": 50990,
+  "training_by_source": {
+    "nufold": 2513,
+    "repa_round1": 3986,
+    "nufolddb_round3": 1797,
+    "nufolddb_relaxed_gap25": 42694
+  },
+  "recorded_split_counts": {
+    "train": 50990,
+    "validation": 46,
+    "test": 36
+  },
+  "historical_world_size": 4,
+  "limitations": "Weights, full training inputs, original environment and historical code revision are not bundled. Membership and world size are bound to a separately saved sidecar by exact arguments and training-log prefix. ID exclusion does not establish sequence-homology separation. Primary 8k membership must not be reused as epoch45 membership. The delivered validation48/test36 generated-MSA evaluation uses this checkpoint, not the primary 8k profile."
 }

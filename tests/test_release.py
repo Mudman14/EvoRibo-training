@@ -103,6 +103,7 @@ def test_recorded_membership_and_profile_agree():
     assert len(membership["train"]) == record["training_count"] == 8296
     assert len(membership["validation"]) == 48
     assert len(membership["test"]) == 36
+    assert record["recorded_internal_split_counts"] == {"train": 8296, "validation": 46, "test": 36}
     train_ids = {row["id"] for row in membership["train"]}
     assert not train_ids.intersection(membership["validation"])
     assert not train_ids.intersection(membership["test"])
@@ -123,7 +124,14 @@ def test_epoch45_profile_is_separate_from_primary_membership():
     assert args.dataset4_name == "nufolddb_relaxed_gap25"
     assert not args.memory_target_cache
     assert record["has_embedded_split"] is False
-    assert "historical_world_size" not in profile["provenance"]
+    assert profile["provenance"]["historical_world_size"] == record["historical_world_size"] == 4
+    assert record["training_count"] == 50990
+    assert record["recorded_split_counts"] == {"train": 50990, "validation": 46, "test": 36}
+    membership = json.loads((ROOT / "configs/recorded/epoch45_split_membership.json").read_text(encoding="utf-8"))
+    assert len(membership["train"]) == 50990
+    train_keys = {(row["source"], row["id"]) for row in membership["train"]}
+    assert len(train_keys) == 50990
+    assert not train_keys.intersection((row["source"], row["id"]) for row in membership["validation"] + membership["test"])
     assert len(record["checkpoint_sha256"]) == 64
 
 

@@ -9,6 +9,15 @@
     "repa_round1": 3986,
     "nufolddb_round3": 1797
   },
+  "recorded_internal_split_counts": {
+    "train": 8296,
+    "validation": 46,
+    "test": 36
+  },
+  "official_benchmark_counts": {
+    "validation": 48,
+    "test": 36
+  },
   "recorded_nonpath_args": {
     "ids": "auto",
     "audit_only": false,
