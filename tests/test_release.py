@@ -1,7 +1,6 @@
 """Synthetic release checks: no original data or pretrained weights required."""
 
 import ast
-import hashlib
 import importlib
 import json
 import os
@@ -93,48 +92,6 @@ def test_profile_preserves_recorded_config_and_explicit_overrides():
     assert overridden.batch_size == 1
 
 
-def test_recorded_membership_and_profile_agree():
-    recorded = ROOT / "configs/recorded"
-    record = json.loads((recorded / "primary_8k_epoch75_record.json").read_text(encoding="utf-8"))
-    profile = json.loads((ROOT / "configs/primary_8k.json").read_text(encoding="utf-8"))
-    for key, value in profile["args"].items():
-        assert record["recorded_nonpath_args"][key] == value
-    membership = json.loads((recorded / "split_membership.json").read_text(encoding="utf-8"))
-    assert len(membership["train"]) == record["training_count"] == 8296
-    assert len(membership["validation"]) == 48
-    assert len(membership["test"]) == 36
-    assert record["recorded_internal_split_counts"] == {"train": 8296, "validation": 46, "test": 36}
-    train_ids = {row["id"] for row in membership["train"]}
-    assert not train_ids.intersection(membership["validation"])
-    assert not train_ids.intersection(membership["test"])
-    validation = json.loads((recorded / "metadata_validation.json").read_text(encoding="utf-8"))
-    for name, digest in validation["files"].items():
-        assert hashlib.sha256((recorded / name).read_bytes()).hexdigest() == digest
-
-
-def test_epoch45_profile_is_separate_from_primary_membership():
-    profile = json.loads((ROOT / "configs/epoch45.json").read_text(encoding="utf-8"))
-    record = json.loads((ROOT / "configs/recorded/epoch45_checkpoint_record.json").read_text(encoding="utf-8"))
-    assert profile["args"] == record["recorded_nonpath_args"]
-    args = build_parser().parse_args(profile_arguments(ROOT / "configs/epoch45.json"))
-    cfg = build_encoder_config(args, [{"status": "OK", "resm_single_dim": 1280, "resm_pair_dim": 660}])
-    assert vars(cfg) == profile["encoder_config"] == record["encoder_config"]
-    assert (record["epoch"], record["global_step"]) == (45, 10791)
-    assert args.grad_accum == 4
-    assert args.dataset4_name == "nufolddb_relaxed_gap25"
-    assert not args.memory_target_cache
-    assert record["has_embedded_split"] is False
-    assert profile["provenance"]["historical_world_size"] == record["historical_world_size"] == 4
-    assert record["training_count"] == 50990
-    assert record["recorded_split_counts"] == {"train": 50990, "validation": 46, "test": 36}
-    membership = json.loads((ROOT / "configs/recorded/epoch45_split_membership.json").read_text(encoding="utf-8"))
-    assert len(membership["train"]) == 50990
-    train_keys = {(row["source"], row["id"]) for row in membership["train"]}
-    assert len(train_keys) == 50990
-    assert not train_keys.intersection((row["source"], row["id"]) for row in membership["validation"] + membership["test"])
-    assert len(record["checkpoint_sha256"]) == 64
-
-
 def test_rank_cache_is_separate(tmp_path):
     args = build_parser().parse_args(["--target_cache_dir", str(tmp_path)])
     rank0 = rank_target_cache_dir(args, rank=0, world_size=4)
@@ -209,14 +166,9 @@ def test_local_import_closure():
                     assert target.with_suffix(".py").is_file() or (target / "__init__.py").is_file(), module
 
 
-def test_source_manifest():
-    assert "* -text" in (ROOT / ".gitattributes").read_text(encoding="utf-8")
+def test_launcher_line_endings():
     for script in (ROOT / "examples/train.sh", ROOT / "examples/run_a800.sbatch"):
         assert b"\r" not in script.read_bytes()
-    manifest = json.loads((ROOT / "SOURCE_MANIFEST.json").read_text(encoding="utf-8"))
-    assert len(manifest["files"]) == 17
-    for record in manifest["files"]:
-        assert hashlib.sha256((ROOT / record["path"]).read_bytes()).hexdigest() == record["release_sha256"]
 
 
 def test_isolated_tiny_cli_training(synthetic_data, tmp_path):

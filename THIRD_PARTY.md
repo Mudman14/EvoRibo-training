@@ -13,4 +13,4 @@ The clean-room `mi3_potts_inverse.py` is project code, not mi3-GPU source.
 RESM feature extraction, upstream pretrained weights, SPOT-RNA BPP generation,
 and original training data are not shipped. Obtain them separately and follow
 their respective terms. The project MIT license does not grant rights to those
-weights or datasets. Recorded membership IDs are provenance, not a data bundle.
+weights or datasets.

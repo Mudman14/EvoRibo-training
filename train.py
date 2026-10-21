@@ -1,4 +1,4 @@
-"""Expand a recorded profile, then run the unchanged training entry point."""
+"""Load a training configuration and run the training entry point."""
 
 import argparse
 import json

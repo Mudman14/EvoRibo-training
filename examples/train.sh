@@ -13,7 +13,6 @@ case "$SOURCE_COUNT" in
 esac
 RUN_NAME="$(basename "$PROFILE" .json)"
 if [[ "$NPROC" == "1" ]]; then
-  # Adapt historical global batch 64 to a smaller micro-batch on one GPU.
   LAUNCH=(python train.py)
   BATCH_SIZE="${BATCH_SIZE:-2}"
   GRAD_ACCUM="${GRAD_ACCUM:-32}"
