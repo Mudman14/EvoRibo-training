@@ -1,4 +1,4 @@
-"""Export RethinkingMSA predicted fi/fij targets for adabmDCA inverse sampling.
+"""Export EvoRibo predicted fi/fij targets for adabmDCA inverse sampling.
 
 The exported per-family ``adabm_stats.pt`` files are intentionally MSA-free:
 they contain the predicted single-site frequencies ``fi`` and bivariate
@@ -236,7 +236,7 @@ def export_sample(
         "q": STATS_Q,
         "id": rna_id,
         "query_sequence": query,
-        "source": "RethinkingMSA_1 factorized_conditional_flow checkpoint",
+        "source": "EvoRibo factorized_conditional_flow checkpoint",
         "checkpoint": str(args.checkpoint),
         "stats_flow_sample_steps": int(getattr(ckpt_args, "stats_flow_sample_steps", 4)),
         "stats_flow_objective": str(getattr(ckpt_args, "stats_flow_objective", "velocity")),

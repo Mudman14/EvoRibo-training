@@ -1,4 +1,4 @@
-"""Self-contained trunk modules for the RethinkingMSA encoder."""
+"""Self-contained trunk modules for the EvoRibo encoder."""
 
 from __future__ import annotations
 

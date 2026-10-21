@@ -10,7 +10,7 @@ requires-python = ">=3.10"
 dynamic = ["dependencies"]
 
 [tool.setuptools]
-packages = ["RethinkingMSA_1"]
+packages = ["EvoRibo"]
 py-modules = ["inverse_coevo_sampler"]
 
 [tool.setuptools.dynamic]

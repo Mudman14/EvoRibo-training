@@ -60,14 +60,14 @@ Use `--amp_dtype none` if your GPU does not support bf16.
 ## Generate MSAs
 
 ```bash
-python -m RethinkingMSA_1.export_adabm_predicted_stats \
+python -m EvoRibo.export_adabm_predicted_stats \
   --checkpoint runs/YOUR_RUN/best.pt --out_dir runs/export \
   --embedding_dir data/source1/embedding --attention_dir data/source1/attention_map \
   --query_dir data/source1/query --bpp_dir data/source1/bpp \
   --msa_dir data/source1/msa --ids YOUR_ID
 
 python -m pip install -r requirements-inverse.txt
-python -m RethinkingMSA_1.run_adabm_inverse_from_predicted_stats \
+python -m EvoRibo.run_adabm_inverse_from_predicted_stats \
   --stats_root runs/export --out_dir runs/inverse
 ```
 

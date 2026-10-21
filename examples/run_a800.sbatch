@@ -17,7 +17,7 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 ROOT=""
 for CANDIDATE in "${RELEASE_ROOT:-}" "$SUBMIT_DIR" "$SUBMIT_DIR/.." \
   "$SUBMIT_DIR/releases/EvoRibo-training" "$SCRIPT_DIR/.."; do
-  if [[ -n "$CANDIDATE" && -f "$CANDIDATE/RethinkingMSA_1/train_direct_trunk_ddp.py" \
+  if [[ -n "$CANDIDATE" && -f "$CANDIDATE/EvoRibo/train_direct_trunk_ddp.py" \
       && -f "$CANDIDATE/examples/train.sh" ]]; then
     ROOT="$(cd -- "$CANDIDATE" && pwd)"
     break

@@ -13,9 +13,9 @@ import numpy as np
 import pytest
 import torch
 
-from RethinkingMSA_1.resm_dataset import RESMTestDataset, _load_target_mi_apc
-from RethinkingMSA_1.train_direct_trunk import build_encoder_config
-from RethinkingMSA_1.train_direct_trunk_ddp import build_parser, rank_target_cache_dir
+from EvoRibo.resm_dataset import RESMTestDataset, _load_target_mi_apc
+from EvoRibo.train_direct_trunk import build_encoder_config
+from EvoRibo.train_direct_trunk_ddp import build_parser, rank_target_cache_dir
 from train import profile_arguments
 
 
@@ -57,10 +57,10 @@ def run_cli(arguments, cwd=ROOT):
 
 
 @pytest.mark.parametrize("module", [
-    "RethinkingMSA_1", "RethinkingMSA_1.train_direct_trunk",
-    "RethinkingMSA_1.train_direct_trunk_ddp", "RethinkingMSA_1.train_resm_smoke",
-    "RethinkingMSA_1.mi3_potts_inverse", "inverse_coevo_sampler",
-    "RethinkingMSA_1.export_adabm_predicted_stats",
+    "EvoRibo", "EvoRibo.train_direct_trunk",
+    "EvoRibo.train_direct_trunk_ddp", "EvoRibo.train_resm_smoke",
+    "EvoRibo.mi3_potts_inverse", "inverse_coevo_sampler",
+    "EvoRibo.export_adabm_predicted_stats",
 ])
 def test_imports_resolve_inside_release(module):
     imported = importlib.import_module(module)
@@ -68,9 +68,9 @@ def test_imports_resolve_inside_release(module):
 
 
 @pytest.mark.parametrize("entry", [
-    ["-m", "RethinkingMSA_1.train_direct_trunk"],
-    ["-m", "RethinkingMSA_1.train_direct_trunk_ddp"],
-    ["-m", "RethinkingMSA_1.train_resm_smoke"],
+    ["-m", "EvoRibo.train_direct_trunk"],
+    ["-m", "EvoRibo.train_direct_trunk_ddp"],
+    ["-m", "EvoRibo.train_resm_smoke"],
     ["train.py", "--profile", "configs/primary_8k.json"],
 ])
 def test_cli_help(entry):
@@ -101,8 +101,8 @@ def test_rank_cache_is_separate(tmp_path):
 
 
 def test_explicit_missing_holdouts_never_disable_exclusions(tmp_path):
-    from RethinkingMSA_1.resm_dataset import read_fasta_ids, read_test_folder_ids
-    from RethinkingMSA_1.train_direct_trunk_ddp import split_multi_source_train_val_test_ids
+    from EvoRibo.resm_dataset import read_fasta_ids, read_test_folder_ids
+    from EvoRibo.train_direct_trunk_ddp import split_multi_source_train_val_test_ids
 
     assert read_fasta_ids(None) == read_test_folder_ids(None) == set()
     rows = [{"id": "source__heldout", "source_id": "heldout"}]
@@ -133,7 +133,7 @@ def test_disk_target_reused_without_memory_retention(synthetic_data, monkeypatch
     def fail_compute(*args, **kwargs):
         raise AssertionError("Expected disk-cache reuse")
 
-    monkeypatch.setattr("RethinkingMSA_1.stat_targets.compute_adabm_stats_target", fail_compute)
+    monkeypatch.setattr("EvoRibo.stat_targets.compute_adabm_stats_target", fail_compute)
     second = dataset[0]
     assert torch.equal(first["fij_target"], second["fij_target"])
     assert not dataset._target_cache
@@ -149,7 +149,7 @@ def test_legacy_lazy_helper_dependency(synthetic_data):
 
 def test_local_import_closure():
     external = set(sys.stdlib_module_names) | {"numpy", "torch", "matplotlib", "adabmDCA"}
-    for source in [*(ROOT / "RethinkingMSA_1").glob("*.py"), ROOT / "inverse_coevo_sampler.py"]:
+    for source in [*(ROOT / "EvoRibo").glob("*.py"), ROOT / "inverse_coevo_sampler.py"]:
         for node in ast.walk(ast.parse(source.read_text(encoding="utf-8"))):
             if isinstance(node, ast.ImportFrom):
                 if node.level:
@@ -171,11 +171,24 @@ def test_launcher_line_endings():
         assert b"\r" not in script.read_bytes()
 
 
+def test_package_name_matches_documented_commands():
+    from setuptools import find_packages
+
+    assert find_packages(where=str(ROOT)) == ["EvoRibo"]
+    assert 'packages = ["EvoRibo"]' in (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    assert "python -m EvoRibo.export_adabm_predicted_stats" in (
+        ROOT / "README.md"
+    ).read_text(encoding="utf-8")
+    assert "$CANDIDATE/EvoRibo/train_direct_trunk_ddp.py" in (
+        ROOT / "examples/run_a800.sbatch"
+    ).read_text(encoding="utf-8")
+
+
 def test_isolated_tiny_cli_training(synthetic_data, tmp_path):
     # A separate source copy prevents accidental imports from the parent EvoNA checkout.
     isolated = tmp_path / "isolated"
     isolated.mkdir()
-    shutil.copytree(ROOT / "RethinkingMSA_1", isolated / "RethinkingMSA_1", ignore=shutil.ignore_patterns("__pycache__"))
+    shutil.copytree(ROOT / "EvoRibo", isolated / "EvoRibo", ignore=shutil.ignore_patterns("__pycache__"))
     shutil.copytree(ROOT / "configs", isolated / "configs")
     for name in ("train.py", "inverse_coevo_sampler.py"):
         shutil.copy2(ROOT / name, isolated / name)
@@ -230,7 +243,7 @@ def test_isolated_tiny_cli_training(synthetic_data, tmp_path):
 
     exported = tmp_path / "exported"
     run_cli([
-        "-m", "RethinkingMSA_1.export_adabm_predicted_stats",
+        "-m", "EvoRibo.export_adabm_predicted_stats",
         "--checkpoint", str(output / "last.pt"), "--out_dir", str(exported),
         "--embedding_dir", str(data / "embedding"), "--attention_dir", str(data / "attention_map"),
         "--query_dir", str(data / "query"), "--bpp_dir", str(data / "bpp"), "--msa_dir", str(data / "msa"),
@@ -247,7 +260,7 @@ def test_isolated_tiny_cli_training(synthetic_data, tmp_path):
     if importlib.util.find_spec("adabmDCA") is not None:
         inverse = tmp_path / "inverse"
         run_cli([
-            "-m", "RethinkingMSA_1.run_adabm_inverse_from_predicted_stats",
+            "-m", "EvoRibo.run_adabm_inverse_from_predicted_stats",
             "--stats_path", str(stats_path), "--out_dir", str(inverse), "--device", "cpu",
             "--nchains", "16", "--ngen", "4", "--max_epochs", "1",
             "--nsweeps", "1", "--sample_nsweeps", "1",

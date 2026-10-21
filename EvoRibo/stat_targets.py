@@ -1,4 +1,4 @@
-"""adabmDCA-style RNA statistics targets for RethinkingMSA.
+"""adabmDCA-style RNA statistics targets for EvoRibo.
 
 The training target convention in this module is intentionally solver-facing:
 

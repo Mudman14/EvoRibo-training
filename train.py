@@ -26,7 +26,7 @@ def main():
     known, remaining = parser.parse_known_args()
     defaults = profile_arguments(known.profile) if known.profile else []
     sys.argv = [sys.argv[0], *defaults, *remaining]
-    runpy.run_module("RethinkingMSA_1.train_direct_trunk_ddp", run_name="__main__")
+    runpy.run_module("EvoRibo.train_direct_trunk_ddp", run_name="__main__")
 
 
 if __name__ == "__main__":

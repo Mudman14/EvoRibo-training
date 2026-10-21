@@ -1,4 +1,4 @@
-"""Configuration for the RethinkingMSA pair encoder."""
+"""Configuration for the EvoRibo pair encoder."""
 
 from dataclasses import dataclass
 

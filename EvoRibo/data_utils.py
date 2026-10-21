@@ -1,4 +1,4 @@
-"""Small data utilities for RethinkingMSA experiments."""
+"""Small data utilities for EvoRibo experiments."""
 
 from __future__ import annotations
 

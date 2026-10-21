@@ -1603,7 +1603,7 @@ def optimize_inverse_msa(
         )
 
     if mode == "mi3_potts":
-        from RethinkingMSA_1.mi3_potts_inverse import fit_mi3_potts_inverse
+        from EvoRibo.mi3_potts_inverse import fit_mi3_potts_inverse
 
         if source_stats is not None and source_stats.alphabet_prior is not None:
             alphabet_probs = source_stats.alphabet_prior.probs

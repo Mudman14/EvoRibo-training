@@ -1,4 +1,4 @@
-"""Readout heads for RethinkingMSA pair representations."""
+"""Readout heads for EvoRibo pair representations."""
 
 from __future__ import annotations
 
